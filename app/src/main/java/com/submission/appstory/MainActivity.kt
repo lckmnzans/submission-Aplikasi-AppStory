@@ -12,11 +12,11 @@ import android.widget.TextView
 class MainActivity : AppCompatActivity() {
     private lateinit var editTextName: EditText
     private lateinit var editTextEmail: EditText
-    private lateinit var editTextPassword: EditText
+    private lateinit var editTextPassword: EditPassword
     private lateinit var textViewError: TextView
-    private lateinit var buttonRegister: Button
     private lateinit var textView2Error: TextView
-    private lateinit var editTextConfirmPassword: EditText
+    private lateinit var editTextConfirmPassword: EditPassword
+    private lateinit var buttonRegister: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
