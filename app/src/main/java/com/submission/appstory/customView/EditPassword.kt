@@ -1,4 +1,4 @@
-package com.submission.appstory
+package com.submission.appstory.customView
 
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
+import com.submission.appstory.R
 
 class EditPassword: AppCompatEditText {
     constructor(context: Context): super(context) {
@@ -22,8 +23,12 @@ class EditPassword: AppCompatEditText {
     }
 
     private var isPasswordVisible: Boolean = false
-    private val showPasswordDrawable: Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_visibility_show)
-    private val hidePasswordDrawable: Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_visibility_hide)
+    private val showPasswordDrawable: Drawable? = ContextCompat.getDrawable(context,
+        R.drawable.ic_visibility_show
+    )
+    private val hidePasswordDrawable: Drawable? = ContextCompat.getDrawable(context,
+        R.drawable.ic_visibility_hide
+    )
 
     private fun init() {
         // Set default input type to textPassword
