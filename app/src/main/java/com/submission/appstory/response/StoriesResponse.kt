@@ -4,17 +4,17 @@ import com.google.gson.annotations.SerializedName
 
 data class StoriesResponse(
 
+	@field:SerializedName("listStory")
+	val listStory: List<ListStoryItem>,
+
 	@field:SerializedName("error")
 	val error: Boolean,
 
 	@field:SerializedName("message")
-	val message: String,
-
-	@field:SerializedName("listStory")
-	val listStory: List<ListStoryArray?>? = null
+	val message: String
 )
 
-data class ListStoryArray(
+data class ListStoryItem(
 
 	@field:SerializedName("photoUrl")
 	val photoUrl: String? = null,
@@ -29,11 +29,11 @@ data class ListStoryArray(
 	val description: String? = null,
 
 	@field:SerializedName("lon")
-	val lon: Any? = null,
+	val lon: Any,
 
 	@field:SerializedName("id")
 	val id: String? = null,
 
 	@field:SerializedName("lat")
-	val lat: Any? = null
+	val lat: Any
 )

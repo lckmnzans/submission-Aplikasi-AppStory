@@ -36,9 +36,7 @@ class LoginActivity : AppCompatActivity() {
         val isLoggedIn = getSharedPreferences("LoginSession", Context.MODE_PRIVATE).getBoolean("isLoggedIn", false)
         if (isLoggedIn) {
             binding.tvAlert.text = "Anda sudah login"
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
+            toMainActivity()
         } else {
             binding.tvAlert.text = "Anda belum login"
         }
@@ -52,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginUser(email: String, password: String) {
         binding.loadLogin.visibility = View.VISIBLE
-        val call = ApiConfig.getApiService().login(email, password)
+        val call = ApiConfig.getApiService("").login(email, password)
         call.enqueue(object: Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 binding.loadLogin.visibility = View.INVISIBLE
@@ -61,6 +59,7 @@ class LoginActivity : AppCompatActivity() {
                     binding.tvAlert.text = "Login sukses"
                     Log.d(TAG, "Token: $token")
                     saveSession(token)
+                    toMainActivity()
                 } else {
                     binding.tvAlert.text = response.body()?.message ?: "Login gagal"
                     Log.e(TAG, "onResponse: ${response.body()?.message ?: "Login gagal"}")
@@ -81,6 +80,11 @@ class LoginActivity : AppCompatActivity() {
         editor.apply()
     }
 
+    private fun toMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
     companion object {
         private const val TAG = "LoginActivity"
     }

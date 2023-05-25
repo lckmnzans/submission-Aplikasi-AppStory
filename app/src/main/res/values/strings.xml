@@ -7,4 +7,7 @@
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="register">Register</string>
+    <string name="add_content">Add content</string>
+    <string name="user_avatar">User photo</string>
+    <string name="user_name">User name</string>
 </resources>
