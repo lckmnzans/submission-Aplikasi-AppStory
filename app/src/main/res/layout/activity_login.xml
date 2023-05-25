@@ -20,12 +20,22 @@
         android:id="@+id/ed_login_email"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginBottom="20dp"
+        android:drawableStart="@drawable/ic_email"
+        android:drawablePadding="12dp"
         android:hint="@string/email" />
+    <TextView
+        android:id="@+id/tv_email_alert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp"/>
     <com.submission.appstory.customView.EditPassword
         android:id="@+id/ed_login_password"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:drawableStart="@drawable/ic_lock"
+        android:drawablePadding="12dp"
         android:hint="@string/password"/>
     <TextView
         android:id="@+id/tv_alert"

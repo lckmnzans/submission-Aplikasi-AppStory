@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import com.submission.appstory.api.ApiConfig
@@ -21,6 +23,27 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.edLoginEmail.addTextChangedListener(object: TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                //
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                //
+            }
+
+            override fun afterTextChanged(editable: Editable?) {
+                val email = editable.toString()
+                if (isEmailValid(email)) {
+                    // Email valid, lakukan tindakan yang sesuai
+                    binding.tvEmailAlert.text = null
+                } else {
+                    // Email tidak valid, tampilkan pesan kesalahan
+                    binding.tvEmailAlert.text = "Email tidak valid"
+                }
+            }
+
+        })
         binding.btnLogin.setOnClickListener {
             val email = binding.edLoginEmail.text.toString()
             val password = binding.edLoginPassword.text.toString()
@@ -31,7 +54,6 @@ class LoginActivity : AppCompatActivity() {
         binding.btnCreateAccount.setOnClickListener {
             navigateToRegister()
         }
-
 
         val isLoggedIn = getSharedPreferences("LoginSession", Context.MODE_PRIVATE).getBoolean("isLoggedIn", false)
         if (isLoggedIn) {
@@ -84,6 +106,12 @@ class LoginActivity : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private fun isEmailValid(email: String): Boolean {
+        val emailPattern1 = Regex("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+        val emailPattern2 = Regex("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}+\\.[a-zA-Z]{2,}+\\.[a-zA-Z]{2,}")
+        return email.matches(emailPattern1) || email.matches(emailPattern2)
     }
     companion object {
         private const val TAG = "LoginActivity"
