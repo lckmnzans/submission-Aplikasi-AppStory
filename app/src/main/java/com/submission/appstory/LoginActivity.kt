@@ -39,7 +39,7 @@ class LoginActivity : AppCompatActivity() {
                     binding.tvEmailAlert.text = null
                 } else {
                     // Email tidak valid, tampilkan pesan kesalahan
-                    binding.tvEmailAlert.text = "Email tidak valid"
+                    binding.tvEmailAlert.text = "Email belum valid"
                 }
             }
 
