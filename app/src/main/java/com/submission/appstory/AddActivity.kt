@@ -1,5 +1,6 @@
 package com.submission.appstory
 
+import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_GET_CONTENT
 import android.content.pm.PackageManager
@@ -12,11 +13,21 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.submission.appstory.api.ApiConfig
 import com.submission.appstory.databinding.ActivityAddBinding
+import com.submission.appstory.response.AddStoryResponse
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.File
 
 class AddActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddBinding
+    private var getFile: File? = null
 
     companion object {
         const val CAMERA_X_RESULT = 200
@@ -69,6 +80,10 @@ class AddActivity : AppCompatActivity() {
             val choser = Intent.createChooser(intent, "Pilih gambar dari galeri")
             launcherIntentGallery.launch(choser)
         }
+
+        binding.buttonAdd.setOnClickListener {
+            upload()
+        }
     }
 
     private fun startCameraX() {
@@ -88,6 +103,7 @@ class AddActivity : AppCompatActivity() {
             } as? File
             val isBackCamera = it.data?.getBooleanExtra("isBackCamera", true) as Boolean
             myFile?.let { file ->
+                getFile = file
                 binding.ivPreview.setImageBitmap(BitmapFactory.decodeFile(file.path))
             }
         }
@@ -100,8 +116,49 @@ class AddActivity : AppCompatActivity() {
             val selectedImg = result.data?.data as Uri
             selectedImg.let { uri ->
                 val myFile = uriToFile(uri, this@AddActivity)
+                getFile = myFile
                 binding.ivPreview.setImageURI(uri)
             }
+        }
+    }
+
+    private fun upload() {
+        if (getFile != null) {
+            val file = reduceFileImage(getFile as File)
+            val desc = binding.edAddDescription.text.toString()
+            val description = desc.toRequestBody("text/plain".toMediaType())
+            val requestImageFile = file.asRequestBody("image/jpeg".toMediaType())
+            val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
+                "photo",
+                file.name,
+                requestImageFile
+            )
+            val token = getSharedPreferences("LoginSession", Context.MODE_PRIVATE).getString("token", "")
+            val call = ApiConfig.getApiService(token.toString()).addStory(imageMultipart, description)
+            call.enqueue(object: Callback<AddStoryResponse> {
+                override fun onResponse(
+                    call: Call<AddStoryResponse>,
+                    response: Response<AddStoryResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+                        if (responseBody != null && !responseBody.error) {
+                            Toast.makeText(this@AddActivity, responseBody.message, Toast.LENGTH_SHORT).show()
+                            val intent = Intent(this@AddActivity, MainActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+                    } else {
+                        Toast.makeText(this@AddActivity, response.message(), Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<AddStoryResponse>, t: Throwable) {
+                    Toast.makeText(this@AddActivity, t.message, Toast.LENGTH_SHORT).show()
+                }
+            })
+        } else {
+            Toast.makeText(this@AddActivity, "Silahkan masukkan berkas terlebih dahulu", Toast.LENGTH_SHORT).show()
         }
     }
 }
