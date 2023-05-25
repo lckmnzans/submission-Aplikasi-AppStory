@@ -32,14 +32,17 @@ class LoginActivity : AppCompatActivity() {
             navigateToRegister()
         }
 
-        /*
+
         val isLoggedIn = getSharedPreferences("LoginSession", Context.MODE_PRIVATE).getBoolean("isLoggedIn", false)
         if (isLoggedIn) {
             binding.tvAlert.text = "Anda sudah login"
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
         } else {
             binding.tvAlert.text = "Anda belum login"
         }
-        */
+
     }
 
     private fun navigateToRegister() {
