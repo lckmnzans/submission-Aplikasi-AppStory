@@ -33,6 +33,11 @@ class MainActivity : AppCompatActivity() {
         binding.rvStories.layoutManager = LinearLayoutManager(this)
         val token = getSharedPreferences("LoginSession", Context.MODE_PRIVATE).getString("token", "")
         getStories(token.toString())
+
+        binding.fabAddStory.setOnClickListener {
+            val intent = Intent(this, AddActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
