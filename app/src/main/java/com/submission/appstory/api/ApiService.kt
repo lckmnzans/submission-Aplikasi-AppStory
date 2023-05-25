@@ -1,6 +1,5 @@
 package com.submission.appstory.api
 
-import com.submission.appstory.LoginRequest
 import com.submission.appstory.RegisterRequest
 import com.submission.appstory.response.LoginResponse
 import com.submission.appstory.response.RegisterResponse
