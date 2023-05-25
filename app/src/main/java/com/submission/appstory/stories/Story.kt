@@ -7,5 +7,6 @@ import kotlinx.parcelize.Parcelize
 data class Story(
     val id: String,
     val userName: String,
-    val avtUrl: String
+    val avtUrl: String,
+    val desc: String,
 ): Parcelable

@@ -79,11 +79,20 @@ class MainActivity : AppCompatActivity() {
     private fun setUserStories(stories: List<ListStoryItem>) {
         val list = ArrayList<Story>()
         for (story in stories) {
-            val storyData = Story(story.id.toString(), story.name.toString(), story.photoUrl.toString())
+            val storyData = Story(story.id.toString(), story.name.toString(), story.photoUrl.toString(), story.description.toString())
             list.add(storyData)
         }
 
         val listStory = StoryAdapter(list)
         binding.rvStories.adapter = listStory
+
+        listStory.setOnItemClickCallback(object: StoryAdapter.OnItemClickCallback {
+            override fun onItemClicked(data: Story) {
+                val storyDetail = Story(data.id, data.userName, data.avtUrl, data.desc)
+                val intent = Intent(this@MainActivity, DetailActivity::class.java)
+                intent.putExtra(DetailActivity.EXTRA_STORY, storyDetail)
+                startActivity(intent)
+            }
+        })
     }
 }

@@ -10,4 +10,5 @@
     <string name="add_content">Add content</string>
     <string name="user_avatar">User photo</string>
     <string name="user_name">User name</string>
+    <string name="user_desc">Story Description</string>
 </resources>
