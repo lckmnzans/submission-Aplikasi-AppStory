@@ -1,11 +1,23 @@
 package com.submission.appstory
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.TextView
+import android.widget.Toast
+import com.submission.appstory.api.ApiConfig
 import com.submission.appstory.databinding.ActivityRegisterBinding
+import com.submission.appstory.response.AddStoryResponse
+import com.submission.appstory.response.RegisterRequest
+import com.submission.appstory.response.RegisterResponse
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
@@ -67,6 +79,6 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun registerUser(name: String, email: String, password: String) {
-        // Implementasi logika untuk registrasi pengguna di sini
+        //
     }
 }

@@ -1,10 +1,6 @@
 package com.submission.appstory.api
 
-import com.submission.appstory.RegisterRequest
-import com.submission.appstory.response.AddStoryResponse
-import com.submission.appstory.response.LoginResponse
-import com.submission.appstory.response.RegisterResponse
-import com.submission.appstory.response.StoriesResponse
+import com.submission.appstory.response.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -13,7 +9,7 @@ import retrofit2.http.*
 interface ApiService {
     @POST("register")
     fun register(
-        @Body request: RegisterRequest
+        @Body regCredential : RegisterRequest
     ): Call<RegisterResponse>
 
     @FormUrlEncoded

@@ -103,6 +103,7 @@ class AddActivity : AppCompatActivity() {
             } as? File
             val isBackCamera = it.data?.getBooleanExtra("isBackCamera", true) as Boolean
             myFile?.let { file ->
+                rotateFile(file, isBackCamera)
                 getFile = file
                 binding.ivPreview.setImageBitmap(BitmapFactory.decodeFile(file.path))
             }

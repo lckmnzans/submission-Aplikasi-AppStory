@@ -8,6 +8,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.TextView
+import android.widget.Toast
 import com.submission.appstory.api.ApiConfig
 import com.submission.appstory.databinding.ActivityLoginBinding
 import com.submission.appstory.response.LoginResponse
@@ -44,6 +46,21 @@ class LoginActivity : AppCompatActivity() {
             }
 
         })
+        binding.edLoginPassword.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val password = s.toString()
+                if (password.length < 8) {
+                    binding.tvPasswordAlert.text = "Password minimal 8 karakter"
+                    binding.tvPasswordAlert.visibility = TextView.VISIBLE
+                } else {
+                    binding.tvPasswordAlert.visibility = TextView.INVISIBLE
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
         binding.btnLogin.setOnClickListener {
             val email = binding.edLoginEmail.text.toString()
             val password = binding.edLoginPassword.text.toString()
@@ -57,12 +74,8 @@ class LoginActivity : AppCompatActivity() {
 
         val isLoggedIn = getSharedPreferences("LoginSession", Context.MODE_PRIVATE).getBoolean("isLoggedIn", false)
         if (isLoggedIn) {
-            binding.tvAlert.text = "Anda sudah login"
             toMainActivity()
-        } else {
-            binding.tvAlert.text = "Anda belum login"
         }
-
     }
 
     private fun navigateToRegister() {
@@ -77,13 +90,18 @@ class LoginActivity : AppCompatActivity() {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 binding.loadLogin.visibility = View.INVISIBLE
                 if (response.isSuccessful) {
-                    val token = response.body()?.loginResult?.token
-                    binding.tvAlert.text = "Login sukses"
-                    Log.d(TAG, "Token: $token")
-                    saveSession(token)
-                    toMainActivity()
+                    val responseBody = response.body()
+                    if (responseBody != null && !responseBody.error) {
+                        val token = responseBody.loginResult?.token
+                        Log.d(TAG, "Token: $token")
+                        Toast.makeText(this@LoginActivity, "Login sukses", Toast.LENGTH_SHORT).show()
+                        saveSession(token)
+                        toMainActivity()
+                    }
                 } else {
-                    binding.tvAlert.text = response.body()?.message ?: "Login gagal"
+                    Toast.makeText(this@LoginActivity, response.body()?.message ?: "Login gagal", Toast.LENGTH_SHORT).show()
+                    binding.tvPasswordAlert.visibility = View.VISIBLE
+                    binding.tvPasswordAlert.text = "Login gagal. Silahkan coba lagi atau sesuaikan email atau password anda."
                     Log.e(TAG, "onResponse: ${response.body()?.message ?: "Login gagal"}")
                 }
             }

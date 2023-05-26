@@ -30,8 +30,6 @@ class EditPassword: AppCompatEditText {
         R.drawable.ic_visibility_hide
     )
 
-    private val iconDrawable: Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_lock)
-
     private fun init() {
         // Set default input type to textPassword
         inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
@@ -46,7 +44,7 @@ class EditPassword: AppCompatEditText {
                 // Show or hide the password visibility toggle icon based on the input length
                 val showIcon = s?.isNotEmpty() ?: false
                 val endDrawable = if (showIcon) showPasswordDrawable else null
-                setCompoundDrawablesRelativeWithIntrinsicBounds(iconDrawable, null, endDrawable, null)
+                setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, endDrawable, null)
             }
         })
 
@@ -72,6 +70,6 @@ class EditPassword: AppCompatEditText {
 
         // Update the end drawable based on the password visibility
         val endDrawable = if (isPasswordVisible) hidePasswordDrawable else showPasswordDrawable
-        setCompoundDrawablesRelativeWithIntrinsicBounds(iconDrawable, null, endDrawable, null)
+        setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, endDrawable, null)
     }
 }
