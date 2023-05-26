@@ -117,8 +117,4 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this@LoginActivity, "Login gagal", Toast.LENGTH_SHORT).show()
         }
     }
-
-    companion object {
-        private const val TAG = "LoginActivity"
-    }
 }

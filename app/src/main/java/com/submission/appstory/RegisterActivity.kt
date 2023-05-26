@@ -100,36 +100,6 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    /*
-    private fun registerUser(name: String, email: String, password: String) {
-        val regRequest = RegisterRequest(name, email, password)
-        val call = ApiConfig.getApiService("").register(regRequest)
-        call.enqueue(object : Callback<RegisterResponse>{
-            override fun onResponse(
-                call: Call<RegisterResponse>,
-                response: Response<RegisterResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody != null && !responseBody.error) {
-                        Toast.makeText(this@RegisterActivity, "Register sukses", Toast.LENGTH_SHORT).show()
-                        Log.d(TAG, "onResponse: ${responseBody.message}")
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
-                Log.e(TAG, "onFailure: ${t.message}")
-            }
-        } )
-    }*/
-
-    /*
-    private fun isEmailValid(email: String): Boolean {
-        val emailPattern1 = Regex("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
-        val emailPattern2 = Regex("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}+\\.[a-zA-Z]{2,}+\\.[a-zA-Z]{2,}")
-        return email.matches(emailPattern1) || email.matches(emailPattern2)
-    }*/
     private fun showRegisterResponse(isSuccess: Boolean) {
         if (isSuccess) {
             Toast.makeText(this@RegisterActivity, "Register sukses", Toast.LENGTH_SHORT).show()
@@ -138,9 +108,5 @@ class RegisterActivity : AppCompatActivity() {
             binding.tvPasswordAlert.text = "Register gagal. Silahkan coba lagi atau sesuaikan email anda."
             Toast.makeText(this@RegisterActivity, "Register gagal", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    companion object {
-        private const val TAG = "RegisterActivity"
     }
 }

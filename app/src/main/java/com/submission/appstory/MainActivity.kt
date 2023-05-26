@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.submission.appstory.api.ApiConfig
 import com.submission.appstory.databinding.ActivityMainBinding
@@ -15,16 +16,19 @@ import com.submission.appstory.response.ListStoryItem
 import com.submission.appstory.response.StoriesResponse
 import com.submission.appstory.stories.Story
 import com.submission.appstory.stories.StoryAdapter
+import com.submission.appstory.viewModel.MainViewModel
+import kotlinx.coroutines.delay
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-
-    companion object {
-        private const val TAG = "MainActivity"
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[MainViewModel::class.java]
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -32,7 +36,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.rvStories.layoutManager = LinearLayoutManager(this)
         val token = getSharedPreferences("LoginSession", Context.MODE_PRIVATE).getString("token", "")
-        getStories(token.toString())
+        viewModel.getStories(token.toString())
+        viewModel.isLoading.observe(this) {isLoading -> showLoading(isLoading)}
+        viewModel.listStory.observe(this) {listStory -> setUserStories(listStory)}
 
         binding.fabAddStory.setOnClickListener {
             val intent = Intent(this, AddActivity::class.java)
@@ -50,33 +56,11 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.menu_setting -> {
                 getSharedPreferences("LoginSession", Context.MODE_PRIVATE).edit().clear().apply()
-                finish()
+                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                finishAffinity()
             }
         }
         return true
-    }
-    private fun getStories(token: String) {
-        binding.loadMain.visibility = View.VISIBLE
-        val call = ApiConfig.getApiService(token).getAllStories()
-        call.enqueue(object: Callback<StoriesResponse> {
-            override fun onResponse(
-                call: Call<StoriesResponse>,
-                response: Response<StoriesResponse>
-            ) {
-                if (response.isSuccessful) {
-                    binding.loadMain.visibility = View.GONE
-                    val responseBody = response.body()!!
-                    setUserStories(responseBody.listStory)
-                } else {
-                    Log.e(TAG, "onFailure: ${response.message()}")
-                }
-            }
-
-            override fun onFailure(call: Call<StoriesResponse>, t: Throwable) {
-                binding.loadMain.visibility = View.GONE
-                Log.e(TAG, "onFailure: ${t.message}")
-            }
-        })
     }
 
     private fun setUserStories(stories: List<ListStoryItem>) {
@@ -97,5 +81,12 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         })
+    }
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.loadMain.visibility = View.VISIBLE
+        } else {
+            binding.loadMain.visibility = View.INVISIBLE
+        }
     }
 }
