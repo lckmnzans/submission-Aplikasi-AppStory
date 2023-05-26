@@ -19,47 +19,59 @@
         android:id="@+id/ed_register_name"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginBottom="20dp"
         android:inputType="textPersonName"
         android:hint="@string/name" />
+    <TextView
+        android:id="@+id/tv_name_alert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FF0000"
+        android:layout_marginBottom="20dp"
+        android:visibility="visible" />
 
     <EditText
         android:id="@+id/ed_register_email"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginBottom="20dp"
         android:inputType="textEmailAddress"
         android:hint="@string/email" />
+    <TextView
+        android:id="@+id/tv_email_alert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FF0000"
+        android:layout_marginBottom="20dp"
+        android:visibility="visible" />
 
     <com.submission.appstory.customView.EditPassword
         android:id="@+id/ed_register_password"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginBottom="20dp"
         android:inputType="textPassword"
         android:hint="@string/password" />
 
     <TextView
-        android:id="@+id/tv_error"
+        android:id="@+id/tv_password_alert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#FF0000"
-        android:visibility="gone" />
+        android:layout_marginBottom="20dp"
+        android:visibility="visible" />
 
     <com.submission.appstory.customView.EditPassword
         android:id="@+id/ed_register_password_confirmation"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginBottom="20dp"
         android:inputType="textPassword"
         android:hint="@string/confirm_password" />
 
     <TextView
-        android:id="@+id/tv_error2"
+        android:id="@+id/tv_password2_alert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#FF0000"
-        android:visibility="gone" />
+        android:visibility="visible"
+        android:layout_marginBottom="20dp" />
 
     <Button
         android:id="@+id/btn_register"
