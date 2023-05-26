@@ -9,16 +9,22 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.ViewModelProvider
 import com.submission.appstory.api.ApiConfig
 import com.submission.appstory.databinding.ActivityRegisterBinding
 import com.submission.appstory.response.RegisterRequest
 import com.submission.appstory.response.RegisterResponse
+import com.submission.appstory.viewModel.LoginViewModel
+import com.submission.appstory.viewModel.RegisterViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
+    private val viewModel: RegisterViewModel by lazy {
+        ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[RegisterViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,11 +38,9 @@ class RegisterActivity : AppCompatActivity() {
 
             override fun afterTextChanged(editable: Editable?) {
                 val email = editable.toString()
-                if (isEmailValid(email)) {
-                    // Email valid, lakukan tindakan yang sesuai
+                if (viewModel.isEmailValid(email)) {
                     binding.tvEmailAlert.text = ""
                 } else {
-                    // Email tidak valid, tampilkan pesan kesalahan
                     binding.tvEmailAlert.text = "Email belum valid"
                 }
             }
@@ -90,12 +94,13 @@ class RegisterActivity : AppCompatActivity() {
             if (password == passwordConfirmation) {
                 binding.tvPasswordAlert.visibility = TextView.INVISIBLE
                 binding.tvPassword2Alert.visibility = TextView.INVISIBLE
-                registerUser(name, email, password)
+                viewModel.registerUser(name, email, password)
+                viewModel.isSuccess.observe(this) {isSuccess -> showRegisterResponse(isSuccess)}
             }
-            // Lakukan validasi lainnya dan lakukan registrasi
         }
     }
 
+    /*
     private fun registerUser(name: String, email: String, password: String) {
         val regRequest = RegisterRequest(name, email, password)
         val call = ApiConfig.getApiService("").register(regRequest)
@@ -117,12 +122,22 @@ class RegisterActivity : AppCompatActivity() {
                 Log.e(TAG, "onFailure: ${t.message}")
             }
         } )
-    }
+    }*/
 
+    /*
     private fun isEmailValid(email: String): Boolean {
         val emailPattern1 = Regex("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
         val emailPattern2 = Regex("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}+\\.[a-zA-Z]{2,}+\\.[a-zA-Z]{2,}")
         return email.matches(emailPattern1) || email.matches(emailPattern2)
+    }*/
+    private fun showRegisterResponse(isSuccess: Boolean) {
+        if (isSuccess) {
+            Toast.makeText(this@RegisterActivity, "Register sukses", Toast.LENGTH_SHORT).show()
+        } else {
+            binding.tvPasswordAlert.visibility = View.VISIBLE
+            binding.tvPasswordAlert.text = "Register gagal. Silahkan coba lagi atau sesuaikan email anda."
+            Toast.makeText(this@RegisterActivity, "Register gagal", Toast.LENGTH_SHORT).show()
+        }
     }
 
     companion object {
