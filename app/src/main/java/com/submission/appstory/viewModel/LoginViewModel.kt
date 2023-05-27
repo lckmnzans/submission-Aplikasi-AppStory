@@ -1,14 +1,9 @@
 package com.submission.appstory.viewModel
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
-import android.view.View
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.submission.appstory.LoginActivity
 import com.submission.appstory.api.ApiConfig
 import com.submission.appstory.response.LoginResponse
 import retrofit2.Call
@@ -53,8 +48,7 @@ class LoginViewModel: ViewModel() {
 
     fun isEmailValid(email: String): Boolean {
         val emailPattern1 = Regex("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
-        val emailPattern2 = Regex("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}+\\.[a-zA-Z]{2,}+\\.[a-zA-Z]{2,}")
-        return email.matches(emailPattern1) || email.matches(emailPattern2)
+        return email.matches(emailPattern1)
     }
 
     companion object {

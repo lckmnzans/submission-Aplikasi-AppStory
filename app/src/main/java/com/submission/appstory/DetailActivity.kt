@@ -27,6 +27,7 @@ class DetailActivity : AppCompatActivity() {
 
     private fun setStoryDetail(story: Story) {
         Glide.with(this@DetailActivity).load(story.avtUrl).into(binding.ivUserPhoto)
+        binding.tvUserName.text = story.userName
         binding.tvUserDesc.text = story.desc
     }
     private fun getParceableData(): Story? {

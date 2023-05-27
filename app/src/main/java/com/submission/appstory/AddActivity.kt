@@ -1,5 +1,6 @@
 package com.submission.appstory
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_GET_CONTENT
@@ -9,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -103,7 +105,6 @@ class AddActivity : AppCompatActivity() {
             } as? File
             val isBackCamera = it.data?.getBooleanExtra("isBackCamera", true) as Boolean
             myFile?.let { file ->
-                rotateFile(file, isBackCamera)
                 getFile = file
                 binding.ivPreview.setImageBitmap(BitmapFactory.decodeFile(file.path))
             }
@@ -135,6 +136,7 @@ class AddActivity : AppCompatActivity() {
                 requestImageFile
             )
             val token = getSharedPreferences("LoginSession", Context.MODE_PRIVATE).getString("token", "")
+            showLoading(true)
             val call = ApiConfig.getApiService(token.toString()).addStory(imageMultipart, description)
             call.enqueue(object: Callback<AddStoryResponse> {
                 override fun onResponse(
@@ -142,6 +144,7 @@ class AddActivity : AppCompatActivity() {
                     response: Response<AddStoryResponse>
                 ) {
                     if (response.isSuccessful) {
+                        showLoading(false)
                         val responseBody = response.body()
                         if (responseBody != null && !responseBody.error) {
                             Toast.makeText(this@AddActivity, responseBody.message, Toast.LENGTH_SHORT).show()
@@ -155,11 +158,22 @@ class AddActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<AddStoryResponse>, t: Throwable) {
+                    showLoading(false)
                     Toast.makeText(this@AddActivity, t.message, Toast.LENGTH_SHORT).show()
                 }
             })
         } else {
             Toast.makeText(this@AddActivity, "Silahkan masukkan berkas terlebih dahulu", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            ObjectAnimator.ofFloat(binding.buttonAdd, View.ALPHA, 0f).start()
+            binding.progressIndicator.visibility = View.VISIBLE
+        } else {
+            ObjectAnimator.ofFloat(binding.buttonAdd, View.ALPHA, 1f).start()
+            binding.progressIndicator.visibility = View.GONE
         }
     }
 }

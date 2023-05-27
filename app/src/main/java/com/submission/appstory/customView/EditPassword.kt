@@ -7,10 +7,10 @@ import android.text.InputType
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.submission.appstory.R
 
 class EditPassword: AppCompatEditText {
@@ -32,25 +32,32 @@ class EditPassword: AppCompatEditText {
         R.drawable.ic_visibility_hide
     )
 
+    var alertMsg = ""
+    var alertCode = 0
+
     private fun init() {
-        // Set default input type to textPassword
         inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
 
-        // Add a TextWatcher to monitor text changes
         addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val password = s.toString()
+                if (password.length < 8) {
+                    alertCode = 1
+                    alertMsg = "Password minimal 8 karakter"
+                } else {
+                    alertCode = 0
+                }
+            }
 
             override fun afterTextChanged(s: Editable?) {
-                // Show or hide the password visibility toggle icon based on the input length
                 val showIcon = s?.isNotEmpty() ?: false
                 val endDrawable = if (showIcon) showPasswordDrawable else null
                 setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, endDrawable, null)
             }
         })
 
-        // Set a click listener to toggle password visibility when the end drawable is clicked
         setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP && event.rawX >= right - compoundPaddingEnd) {
                 togglePasswordVisibility()
@@ -61,7 +68,6 @@ class EditPassword: AppCompatEditText {
     }
 
     private fun togglePasswordVisibility() {
-        // Toggle password visibility and update the input type accordingly
         isPasswordVisible = !isPasswordVisible
         val inputType = if (isPasswordVisible) {
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
@@ -70,7 +76,6 @@ class EditPassword: AppCompatEditText {
         }
         setInputType(inputType)
 
-        // Update the end drawable based on the password visibility
         val endDrawable = if (isPasswordVisible) hidePasswordDrawable else showPasswordDrawable
         setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, endDrawable, null)
     }

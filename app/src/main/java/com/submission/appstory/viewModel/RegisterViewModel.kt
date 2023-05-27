@@ -1,11 +1,9 @@
 package com.submission.appstory.viewModel
 
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.submission.appstory.RegisterActivity
 import com.submission.appstory.api.ApiConfig
 import com.submission.appstory.response.RegisterRequest
 import com.submission.appstory.response.RegisterResponse
@@ -14,7 +12,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class RegisterViewModel: ViewModel() {
-    private val _isSuccess = MutableLiveData<Boolean>()
+    private var _isSuccess = MutableLiveData<Boolean>()
     val isSuccess: LiveData<Boolean> = _isSuccess
 
     fun registerUser(name: String, email: String, password: String) {
@@ -31,18 +29,21 @@ class RegisterViewModel: ViewModel() {
                         _isSuccess.value = true
                         Log.d(TAG, "onResponse: ${responseBody.message}")
                     }
+                } else {
+                    _isSuccess.value = false
+                    Log.e(TAG, "onResponse: ${response.body()?.message ?: "Register gagal"}")
                 }
             }
             override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
+                _isSuccess.value = false
                 Log.e(TAG, "onFailure: ${t.message}")
             }
-        } )
+        })
     }
 
     fun isEmailValid(email: String): Boolean {
         val emailPattern1 = Regex("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
-        val emailPattern2 = Regex("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}+\\.[a-zA-Z]{2,}+\\.[a-zA-Z]{2,}")
-        return email.matches(emailPattern1) || email.matches(emailPattern2)
+        return email.matches(emailPattern1)
     }
 
     companion object {

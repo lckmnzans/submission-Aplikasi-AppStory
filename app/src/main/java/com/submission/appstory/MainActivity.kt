@@ -4,24 +4,16 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.submission.appstory.api.ApiConfig
 import com.submission.appstory.databinding.ActivityMainBinding
 import com.submission.appstory.response.ListStoryItem
-import com.submission.appstory.response.StoriesResponse
 import com.submission.appstory.stories.Story
 import com.submission.appstory.stories.StoryAdapter
 import com.submission.appstory.viewModel.MainViewModel
-import kotlinx.coroutines.delay
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

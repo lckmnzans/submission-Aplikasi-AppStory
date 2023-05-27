@@ -1,23 +1,18 @@
 package com.submission.appstory
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import com.submission.appstory.api.ApiConfig
 import com.submission.appstory.databinding.ActivityLoginBinding
-import com.submission.appstory.response.LoginResponse
 import com.submission.appstory.viewModel.LoginViewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -49,9 +44,16 @@ class LoginActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                /*
                 val password = s.toString()
                 if (password.length < 8) {
                     binding.tvPasswordAlert.text = "Password minimal 8 karakter"
+                    binding.tvPasswordAlert.visibility = TextView.VISIBLE
+                } else {
+                    binding.tvPasswordAlert.visibility = TextView.INVISIBLE
+                }*/
+                if (binding.edLoginPassword.alertCode == 1) {
+                    binding.tvPasswordAlert.text = binding.edLoginPassword.alertMsg
                     binding.tvPasswordAlert.visibility = TextView.VISIBLE
                 } else {
                     binding.tvPasswordAlert.visibility = TextView.INVISIBLE
@@ -101,9 +103,11 @@ class LoginActivity : AppCompatActivity() {
 
     private fun showLoading(isLoading: Boolean) {
         if (isLoading) {
+            ObjectAnimator.ofFloat(binding.layoutLoginInfo, View.ALPHA, 0.2f).start()
             binding.loadLogin.visibility = View.VISIBLE
         } else {
-            binding.loadLogin.visibility = View.INVISIBLE
+            ObjectAnimator.ofFloat(binding.layoutLoginInfo, View.ALPHA, 1f).start()
+            binding.loadLogin.visibility = View.GONE
         }
     }
 

@@ -1,11 +1,9 @@
 package com.submission.appstory.viewModel
 
 import android.util.Log
-import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.submission.appstory.MainActivity
 import com.submission.appstory.api.ApiConfig
 import com.submission.appstory.response.ListStoryItem
 import com.submission.appstory.response.StoriesResponse
