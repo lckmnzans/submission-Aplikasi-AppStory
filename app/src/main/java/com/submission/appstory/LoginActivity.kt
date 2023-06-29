@@ -1,24 +1,27 @@
 package com.submission.appstory
 
+import android.animation.ObjectAnimator
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import com.submission.appstory.api.ApiConfig
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
+import androidx.lifecycle.ViewModelProvider
 import com.submission.appstory.databinding.ActivityLoginBinding
-import com.submission.appstory.response.LoginResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.submission.appstory.viewModel.LoginViewModel
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
+    private val viewModel: LoginViewModel by lazy {
+        ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[LoginViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,12 +35,10 @@ class LoginActivity : AppCompatActivity() {
 
             override fun afterTextChanged(editable: Editable?) {
                 val email = editable.toString()
-                if (isEmailValid(email)) {
-                    // Email valid, lakukan tindakan yang sesuai
-                    binding.tvEmailAlert.text = null
+                if (viewModel.isEmailValid(email)) {
+                    binding.tvEmailAlert.text = ""
                 } else {
-                    // Email tidak valid, tampilkan pesan kesalahan
-                    binding.tvEmailAlert.text = "Email belum valid"
+                    binding.tvEmailAlert.text = resources.getString(R.string.email_is_invalid)
                 }
             }
 
@@ -46,9 +47,8 @@ class LoginActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val password = s.toString()
-                if (password.length < 8) {
-                    binding.tvPasswordAlert.text = "Password minimal 8 karakter"
+                if (binding.edLoginPassword.alertCode == 1) {
+                    binding.tvPasswordAlert.text = binding.edLoginPassword.alertMsg
                     binding.tvPasswordAlert.visibility = TextView.VISIBLE
                 } else {
                     binding.tvPasswordAlert.visibility = TextView.INVISIBLE
@@ -61,7 +61,10 @@ class LoginActivity : AppCompatActivity() {
             val email = binding.edLoginEmail.text.toString()
             val password = binding.edLoginPassword.text.toString()
 
-            loginUser(email, password)
+            viewModel.loginUser(email, password)
+            viewModel.isLoading.observe(this) {isLoading -> showLoading(isLoading)}
+            viewModel.isSuccess.observe(this) {isSuccess -> showLoginResponse(isSuccess)}
+            viewModel.token.observe(this) {token -> saveSession(token)}
         }
 
         binding.btnCreateAccount.setOnClickListener {
@@ -76,36 +79,14 @@ class LoginActivity : AppCompatActivity() {
 
     private fun navigateToRegister() {
         val intent = Intent(this, RegisterActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun loginUser(email: String, password: String) {
-        binding.loadLogin.visibility = View.VISIBLE
-        val call = ApiConfig.getApiService("").login(email, password)
-        call.enqueue(object: Callback<LoginResponse> {
-            override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                binding.loadLogin.visibility = View.INVISIBLE
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody != null && !responseBody.error) {
-                        val token = responseBody.loginResult?.token
-                        Log.d(TAG, "Token: $token")
-                        Toast.makeText(this@LoginActivity, "Login sukses", Toast.LENGTH_SHORT).show()
-                        saveSession(token)
-                        toMainActivity()
-                    }
-                } else {
-                    Toast.makeText(this@LoginActivity, response.body()?.message ?: "Login gagal", Toast.LENGTH_SHORT).show()
-                    binding.tvPasswordAlert.visibility = View.VISIBLE
-                    binding.tvPasswordAlert.text = "Login gagal. Silahkan coba lagi atau sesuaikan email atau password anda."
-                    Log.e(TAG, "onResponse: ${response.body()?.message ?: "Login gagal"}")
-                }
-            }
-            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                binding.loadLogin.visibility = View.INVISIBLE
-                Log.e(TAG, "onFailure: ${t.message}")
-            }
-        })
+        val optionsCompat: ActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+            this@LoginActivity as Activity,
+            Pair(binding.ivPhoto, "profile"),
+            Pair(binding.edLoginEmail, "email"),
+            Pair(binding.edLoginPassword, "password"),
+            Pair(binding.btnCreateAccount, "regbutton"),
+        )
+        this.startActivity(intent, optionsCompat.toBundle())
     }
 
     private fun saveSession(token: String?) {
@@ -122,12 +103,23 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun isEmailValid(email: String): Boolean {
-        val emailPattern1 = Regex("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
-        val emailPattern2 = Regex("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}+\\.[a-zA-Z]{2,}+\\.[a-zA-Z]{2,}")
-        return email.matches(emailPattern1) || email.matches(emailPattern2)
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            ObjectAnimator.ofFloat(binding.layoutLoginInfo, View.ALPHA, 0.2f).start()
+            binding.loadLogin.visibility = View.VISIBLE
+        } else {
+            ObjectAnimator.ofFloat(binding.layoutLoginInfo, View.ALPHA, 1f).start()
+            binding.loadLogin.visibility = View.GONE
+        }
     }
-    companion object {
-        private const val TAG = "LoginActivity"
+
+    private fun showLoginResponse(isSuccess: Boolean) {
+        if (isSuccess) {
+            Toast.makeText(this@LoginActivity, "Login sukses", Toast.LENGTH_SHORT).show()
+            toMainActivity()
+        } else {
+            binding.tvPasswordAlert.visibility = View.VISIBLE
+            binding.tvPasswordAlert.text = resources.getString(R.string.log_is_fail)
+        }
     }
 }

@@ -1,24 +1,21 @@
 package com.submission.appstory
 
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.addTextChangedListener
-import com.submission.appstory.api.ApiConfig
+import androidx.lifecycle.ViewModelProvider
 import com.submission.appstory.databinding.ActivityRegisterBinding
-import com.submission.appstory.response.RegisterRequest
-import com.submission.appstory.response.RegisterResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.submission.appstory.viewModel.RegisterViewModel
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
+    private val viewModel: RegisterViewModel by lazy {
+        ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[RegisterViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,12 +29,10 @@ class RegisterActivity : AppCompatActivity() {
 
             override fun afterTextChanged(editable: Editable?) {
                 val email = editable.toString()
-                if (isEmailValid(email)) {
-                    // Email valid, lakukan tindakan yang sesuai
+                if (viewModel.isEmailValid(email)) {
                     binding.tvEmailAlert.text = ""
                 } else {
-                    // Email tidak valid, tampilkan pesan kesalahan
-                    binding.tvEmailAlert.text = "Email belum valid"
+                    binding.tvEmailAlert.text = resources.getString(R.string.email_is_invalid)
                 }
             }
 
@@ -46,13 +41,11 @@ class RegisterActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val password = s.toString()
-                if (password.length < 8) {
-                    binding.tvPasswordAlert.text = "Password harus minimal 8 karakter"
-                    binding.tvPasswordAlert.visibility = View.VISIBLE
+                if (binding.edRegisterPassword.alertCode == 1) {
+                    binding.tvPasswordAlert.text = binding.edRegisterPassword.alertMsg
+                    binding.tvPasswordAlert.visibility = TextView.VISIBLE
                 } else {
-                    binding.tvPasswordAlert.text = "Password sudah sesuai"
-                    binding.tvPasswordAlert.visibility = View.INVISIBLE
+                    binding.tvPasswordAlert.visibility = TextView.INVISIBLE
                 }
             }
 
@@ -64,15 +57,15 @@ class RegisterActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val password = s.toString()
-                if (password.length < 8) {
-                    binding.tvPassword2Alert.text = "Password harus minimal 8 karakter"
-                    binding.tvPassword2Alert.visibility = View.VISIBLE
+                if (binding.edRegisterPasswordConfirmation.alertCode == 1) {
+                    binding.tvPassword2Alert.text = binding.edRegisterPasswordConfirmation.alertMsg
+                    binding.tvPassword2Alert.visibility = TextView.VISIBLE
                 } else {
                     if (binding.edRegisterPassword.text.toString() != password) {
-                        binding.tvPassword2Alert.text = "Password belum sesuai"
+                        binding.tvPassword2Alert.text = resources.getString(R.string.pass_is_invalid)
                         binding.tvPassword2Alert.visibility = View.VISIBLE
                     } else {
-                        binding.tvPassword2Alert.text = "Password sudah sesuai"
+                        binding.tvPassword2Alert.text = resources.getString(R.string.pass_is_valid)
                         binding.tvPassword2Alert.visibility = View.INVISIBLE
                     }
                 }
@@ -90,42 +83,27 @@ class RegisterActivity : AppCompatActivity() {
             if (password == passwordConfirmation) {
                 binding.tvPasswordAlert.visibility = TextView.INVISIBLE
                 binding.tvPassword2Alert.visibility = TextView.INVISIBLE
-                registerUser(name, email, password)
+                viewModel.registerUser(name, email, password)
+                viewModel.isSuccess.observe(this) { isSuccess ->
+                    showRegisterResponse(isSuccess)
+                }
             }
-            // Lakukan validasi lainnya dan lakukan registrasi
         }
     }
 
-    private fun registerUser(name: String, email: String, password: String) {
-        val regRequest = RegisterRequest(name, email, password)
-        val call = ApiConfig.getApiService("").register(regRequest)
-        call.enqueue(object : Callback<RegisterResponse>{
-            override fun onResponse(
-                call: Call<RegisterResponse>,
-                response: Response<RegisterResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody != null && !responseBody.error) {
-                        Toast.makeText(this@RegisterActivity, "Register sukses", Toast.LENGTH_SHORT).show()
-                        Log.d(TAG, "onResponse: ${responseBody.message}")
-                    }
-                }
+    private fun showRegisterResponse(isSuccess: Boolean) {
+        if (isSuccess) {
+            binding.tvPassword2Alert.apply {
+                visibility = View.VISIBLE
+                setTextColor(Color.BLUE)
+                text = resources.getString(R.string.reg_is_success)
             }
-
-            override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
-                Log.e(TAG, "onFailure: ${t.message}")
+        } else {
+            binding.tvPassword2Alert.apply {
+                visibility = View.INVISIBLE
+                setTextColor(Color.RED)
+                text = resources.getString(R.string.reg_is_fail)
             }
-        } )
-    }
-
-    private fun isEmailValid(email: String): Boolean {
-        val emailPattern1 = Regex("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
-        val emailPattern2 = Regex("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}+\\.[a-zA-Z]{2,}+\\.[a-zA-Z]{2,}")
-        return email.matches(emailPattern1) || email.matches(emailPattern2)
-    }
-
-    companion object {
-        private const val TAG = "RegisterActivity"
+        }
     }
 }
