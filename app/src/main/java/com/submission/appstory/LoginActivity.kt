@@ -1,6 +1,7 @@
 package com.submission.appstory
 
 import android.animation.ObjectAnimator
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +11,8 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import androidx.lifecycle.ViewModelProvider
 import com.submission.appstory.databinding.ActivityLoginBinding
 import com.submission.appstory.viewModel.LoginViewModel
@@ -33,9 +36,9 @@ class LoginActivity : AppCompatActivity() {
             override fun afterTextChanged(editable: Editable?) {
                 val email = editable.toString()
                 if (viewModel.isEmailValid(email)) {
-                    binding.tvEmailAlert.text = null
+                    binding.tvEmailAlert.text = ""
                 } else {
-                    binding.tvEmailAlert.text = "Email belum valid"
+                    binding.tvEmailAlert.text = resources.getString(R.string.email_is_invalid)
                 }
             }
 
@@ -44,14 +47,6 @@ class LoginActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                /*
-                val password = s.toString()
-                if (password.length < 8) {
-                    binding.tvPasswordAlert.text = "Password minimal 8 karakter"
-                    binding.tvPasswordAlert.visibility = TextView.VISIBLE
-                } else {
-                    binding.tvPasswordAlert.visibility = TextView.INVISIBLE
-                }*/
                 if (binding.edLoginPassword.alertCode == 1) {
                     binding.tvPasswordAlert.text = binding.edLoginPassword.alertMsg
                     binding.tvPasswordAlert.visibility = TextView.VISIBLE
@@ -84,7 +79,14 @@ class LoginActivity : AppCompatActivity() {
 
     private fun navigateToRegister() {
         val intent = Intent(this, RegisterActivity::class.java)
-        startActivity(intent)
+        val optionsCompat: ActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+            this@LoginActivity as Activity,
+            Pair(binding.ivPhoto, "profile"),
+            Pair(binding.edLoginEmail, "email"),
+            Pair(binding.edLoginPassword, "password"),
+            Pair(binding.btnCreateAccount, "regbutton"),
+        )
+        this.startActivity(intent, optionsCompat.toBundle())
     }
 
     private fun saveSession(token: String?) {
@@ -117,8 +119,7 @@ class LoginActivity : AppCompatActivity() {
             toMainActivity()
         } else {
             binding.tvPasswordAlert.visibility = View.VISIBLE
-            binding.tvPasswordAlert.text = "Login gagal. Silahkan coba lagi atau sesuaikan email atau password anda."
-            Toast.makeText(this@LoginActivity, "Login gagal", Toast.LENGTH_SHORT).show()
+            binding.tvPasswordAlert.text = resources.getString(R.string.log_is_fail)
         }
     }
 }

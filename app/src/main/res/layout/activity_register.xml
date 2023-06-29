@@ -9,91 +9,113 @@
     android:paddingEnd="15dp"
     android:paddingTop="20dp"
     tools:context=".RegisterActivity">
+
     <ProgressBar
         android:id="@+id/load_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:visibility="gone"
-        tools:visibility="visible"/>
-    <LinearLayout
-        android:id="@+id/layout_register_info"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <ImageView
-            android:id="@+id/iv_photo"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_marginBottom="20dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_account_circle" />
-        <EditText
-            android:id="@+id/ed_register_name"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:inputType="textPersonName"
-            android:hint="@string/name" />
-        <TextView
-            android:id="@+id/tv_name_alert"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/layout_register_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#FF0000"
-            android:layout_marginBottom="20dp"
-            android:visibility="visible" />
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/ed_register_email"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:inputType="textEmailAddress"
-            android:hint="@string/email" />
-        <TextView
-            android:id="@+id/tv_email_alert"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#FF0000"
-            android:layout_marginBottom="20dp"
-            android:visibility="visible" />
+            <ImageView
+                android:id="@+id/iv_photo"
+                android:transitionName="profile"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="20dp"
+                android:src="@drawable/ic_account_circle" />
 
-        <com.submission.appstory.customView.EditPassword
-            android:id="@+id/ed_register_password"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:inputType="textPassword"
-            android:hint="@string/password" />
+            <EditText
+                android:id="@+id/ed_register_name"
+                android:transitionName="name"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:hint="@string/name"
+                android:inputType="textPersonName" />
 
-        <TextView
-            android:id="@+id/tv_password_alert"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#FF0000"
-            android:layout_marginBottom="20dp"
-            android:visibility="visible" />
+            <TextView
+                android:id="@+id/tv_name_alert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:textColor="#FF0000"
+                android:visibility="visible" />
 
-        <com.submission.appstory.customView.EditPassword
-            android:id="@+id/ed_register_password_confirmation"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:inputType="textPassword"
-            android:hint="@string/confirm_password" />
+            <EditText
+                android:id="@+id/ed_register_email"
+                android:transitionName="email"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress" />
 
-        <TextView
-            android:id="@+id/tv_password2_alert"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#FF0000"
-            android:visibility="visible"
-            android:layout_marginBottom="20dp" />
+            <TextView
+                android:id="@+id/tv_email_alert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:textColor="#FF0000"
+                android:visibility="visible" />
 
-        <Button
-            android:id="@+id/btn_register"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="160dp"
-            android:layout_height="80dp"
-            android:text="@string/register" />
-    </LinearLayout>
+            <com.submission.appstory.customView.EditPassword
+                android:id="@+id/ed_register_password"
+                android:transitionName="password"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:hint="@string/password"
+                android:inputType="textPassword" />
+
+            <TextView
+                android:id="@+id/tv_password_alert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:textColor="#FF0000"
+                android:visibility="visible" />
+
+            <com.submission.appstory.customView.EditPassword
+                android:id="@+id/ed_register_password_confirmation"
+                android:transitionName="password"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:hint="@string/confirm_password"
+                android:inputType="textPassword" />
+
+            <TextView
+                android:id="@+id/tv_password2_alert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:textColor="#FF0000"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/btn_register"
+                android:transitionName="regbutton"
+                android:layout_width="160dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/register" />
+        </LinearLayout>
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

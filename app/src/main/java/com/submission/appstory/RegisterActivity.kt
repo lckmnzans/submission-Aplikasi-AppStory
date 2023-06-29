@@ -1,15 +1,12 @@
 package com.submission.appstory
 
-import android.animation.ObjectAnimator
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.submission.appstory.databinding.ActivityRegisterBinding
 import com.submission.appstory.viewModel.RegisterViewModel
@@ -35,7 +32,7 @@ class RegisterActivity : AppCompatActivity() {
                 if (viewModel.isEmailValid(email)) {
                     binding.tvEmailAlert.text = ""
                 } else {
-                    binding.tvEmailAlert.text = "Email belum valid"
+                    binding.tvEmailAlert.text = resources.getString(R.string.email_is_invalid)
                 }
             }
 
@@ -44,15 +41,6 @@ class RegisterActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                /*
-                val password = s.toString()
-                if (password.length < 8) {
-                    binding.tvPasswordAlert.text = "Password harus minimal 8 karakter"
-                    binding.tvPasswordAlert.visibility = View.VISIBLE
-                } else {
-                    binding.tvPasswordAlert.text = "Password sudah sesuai"
-                    binding.tvPasswordAlert.visibility = View.INVISIBLE
-                }*/
                 if (binding.edRegisterPassword.alertCode == 1) {
                     binding.tvPasswordAlert.text = binding.edRegisterPassword.alertMsg
                     binding.tvPasswordAlert.visibility = TextView.VISIBLE
@@ -68,30 +56,16 @@ class RegisterActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                /*
-                val password = s.toString()
-                if (password.length < 8) {
-                    binding.tvPassword2Alert.text = "Password harus minimal 8 karakter"
-                    binding.tvPassword2Alert.visibility = View.VISIBLE
-                } else {
-                    if (binding.edRegisterPassword.text.toString() != password) {
-                        binding.tvPassword2Alert.text = "Password belum sesuai"
-                        binding.tvPassword2Alert.visibility = View.VISIBLE
-                    } else {
-                        binding.tvPassword2Alert.text = "Password sudah sesuai"
-                        binding.tvPassword2Alert.visibility = View.INVISIBLE
-                    }
-                }*/
                 val password = s.toString()
                 if (binding.edRegisterPasswordConfirmation.alertCode == 1) {
                     binding.tvPassword2Alert.text = binding.edRegisterPasswordConfirmation.alertMsg
                     binding.tvPassword2Alert.visibility = TextView.VISIBLE
                 } else {
                     if (binding.edRegisterPassword.text.toString() != password) {
-                        binding.tvPassword2Alert.text = "Password belum sesuai"
+                        binding.tvPassword2Alert.text = resources.getString(R.string.pass_is_invalid)
                         binding.tvPassword2Alert.visibility = View.VISIBLE
                     } else {
-                        binding.tvPassword2Alert.text = "Password sudah sesuai"
+                        binding.tvPassword2Alert.text = resources.getString(R.string.pass_is_valid)
                         binding.tvPassword2Alert.visibility = View.INVISIBLE
                     }
                 }
@@ -119,13 +93,17 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun showRegisterResponse(isSuccess: Boolean) {
         if (isSuccess) {
-            binding.tvPassword2Alert.visibility = View.VISIBLE
-            binding.tvPassword2Alert.setTextColor(Color.BLUE)
-            binding.tvPassword2Alert.text = "Register sukses. Silahkan anda bisa login"
+            binding.tvPassword2Alert.apply {
+                visibility = View.VISIBLE
+                setTextColor(Color.BLUE)
+                text = resources.getString(R.string.reg_is_success)
+            }
         } else {
-            binding.tvPassword2Alert.visibility = View.VISIBLE
-            binding.tvPassword2Alert.setTextColor(Color.RED)
-            binding.tvPassword2Alert.text = "Register gagal. Silahkan coba lagi atau sesuaikan email anda dengan email lain."
+            binding.tvPassword2Alert.apply {
+                visibility = View.INVISIBLE
+                setTextColor(Color.RED)
+                text = resources.getString(R.string.reg_is_fail)
+            }
         }
     }
 }
